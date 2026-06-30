@@ -1,0 +1,46 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local npcName = "R15i_2_blocky"
+
+local function getCharacter()
+	return player.Character or player.CharacterAdded:Wait()
+end
+
+local function getHRP(char)
+	return char:WaitForChild("HumanoidRootPart")
+end
+
+local function getHeadPos(npc)
+	local part = npc:FindFirstChild("HumanoidRootPart") or npc:FindFirstChild("Head")
+	if not part then return nil end
+	return part.Position + Vector3.new(0, 5, 0)
+end
+
+local function getAllNPCs()
+	local list = {}
+	for _, obj in ipairs(workspace:GetDescendants()) do
+		if obj.Name == npcName and obj:IsA("Model") then
+			table.insert(list, obj)
+		end
+	end
+	return list
+end
+
+while true do
+	local npcs = getAllNPCs()
+
+	for _, npc in ipairs(npcs) do
+		local char = getCharacter()
+		local hrp = getHRP(char)
+
+		local pos = getHeadPos(npc)
+		if pos then
+			hrp.CFrame = CFrame.new(pos)
+		end
+
+		task.wait(3)
+	end
+
+	task.wait(0.1)
+end
